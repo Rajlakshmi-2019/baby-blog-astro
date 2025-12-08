@@ -1,0 +1,18 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const res = await fetch("/api/updates", { cache: "no-store" });
+const data = await res.json();
+const medical = data.medical ?? {};
+---
+
+<Layout title="Medical Updates | Baby Athang">
+  <h1>Medical Updates 🩺</h1>
+
+  <ul>
+    <li><strong>Birth Weight:</strong> {medical.birthWeight ?? "Add in admin panel"}</li>
+    <li><strong>Blood Group:</strong> {medical.bloodGroup ?? "Add in admin panel"}</li>
+    <li><strong>Last Check-up:</strong> {medical.lastCheckup ?? "Add in admin panel"}</li>
+    <li><strong>Notes:</strong> {medical.notes ?? "Add in admin panel"}</li>
+  </ul>
+</Layout>

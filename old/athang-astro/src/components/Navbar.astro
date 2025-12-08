@@ -1,0 +1,58 @@
+<nav class="nav">
+  <div class="nav-left">
+    <a href="/" class="brand">👶 Baby Athang</a>
+  </div>
+  <div class="links">
+    <a href="/photos">Photos</a>
+    <a href="/progress">Milestones</a>
+    <a href="/medical-updates">Medical</a>
+    <a href="/astrology">Astrology</a>
+    <a href="/schooling">Schooling</a>
+    <a href="/admin">Admin</a>
+  </div>
+</nav>
+
+<style>
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  background: linear-gradient(62deg, var(--accent) 0%, var(--accent2) 100%);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+.brand {
+  font-weight: 700;
+  text-decoration: none;
+  color: #111;
+}
+.links {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.links a {
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.75);
+  color: #222;
+}
+.links a:hover {
+  background: #fff;
+}
+@media (max-width: 640px) {
+  .nav {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+}
+</style>

@@ -1,0 +1,41 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Welcome | Baby Athang">
+  <section class="banner">
+    <img src="/photos/banner.jpg" alt="Baby Athang Banner" class="banner-img" />
+    <h1>Welcome to Baby Athang’s World 👶💙</h1>
+    <p>
+      This is a private family website to capture the memories, milestones, and
+      magical moments of baby Athang.
+    </p>
+  </section>
+
+  <section>
+    <ul>
+      <li>📸 Photo gallery with his cutest pictures</li>
+      <li>📈 Monthly progress & milestones</li>
+      <li>🩺 Medical & vaccination log</li>
+      <li>🔯 Astrology & birth chart notes</li>
+      <li>🎒 Schooling & activity updates</li>
+    </ul>
+  </section>
+
+  <style>
+    .banner {
+      text-align: center;
+      padding: 1rem 0 2rem;
+    }
+    .banner-img {
+      width: 100%;
+      max-width: 480px;
+      border-radius: 16px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+      margin-bottom: 1rem;
+    }
+    h1 {
+      margin-top: 0.5rem;
+    }
+  </style>
+</Layout>

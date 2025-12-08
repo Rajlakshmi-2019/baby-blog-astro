@@ -1,0 +1,160 @@
+---
+import fs from "fs";
+import path from "path";
+import Layout from "../layouts/Layout.astro";
+
+// Helper function to read images from a directory
+function getImagesFromFolder(folderPath: string): string[] {
+  const fullPath = path.join(process.cwd(), folderPath);
+  if (!fs.existsSync(fullPath)) return [];
+  
+  return fs
+    .readdirSync(fullPath)
+    .filter((f: string) => /\.(jpe?g|png|webp|gif)$/i.test(f))
+    .sort()
+    .map((f: string) => `${folderPath}/${f}`);
+}
+
+// Photos organized by age category from specific folders
+const photosByAge: Record<string, string[]> = {
+  "1st Birthday": getImagesFromFolder("public/photos/one"),
+  "2 years old Birthday shoot": getImagesFromFolder("public/photos/two"),
+};
+
+const ageCategories = Object.keys(photosByAge);
+---
+
+<script>
+  // Client-side filter logic
+  const filterSelect = document.getElementById("age-filter") as HTMLSelectElement;
+  const photoFigures = document.querySelectorAll(".photo") as NodeListOf<HTMLElement>;
+
+  if (filterSelect) {
+    filterSelect.addEventListener("change", (e) => {
+      const selectedAge = (e.target as HTMLSelectElement).value;
+      photoFigures.forEach((fig: HTMLElement) => {
+        const age = fig.getAttribute("data-age");
+        fig.style.display = age === selectedAge ? "block" : "none";
+      });
+    });
+
+    // Show first category by default
+    const firstCategory = filterSelect.options[0]?.value;
+    if (firstCategory) {
+      filterSelect.value = firstCategory;
+      filterSelect.dispatchEvent(new Event("change"));
+    }
+  }
+</script>
+
+<Layout title="Photos | Baby Athang">
+  <section class="page">
+    <h2>Photo Gallery 📸</h2>
+
+    <div class="filter-section">
+      <label for="age-filter">Filter by Age:</label>
+      <select id="age-filter">
+        {ageCategories.map((age) => (
+          <option value={age}>{age}</option>
+        ))}
+      </select>
+    </div>
+
+    <div class="gallery" id="photo-gallery">
+      {Object.entries(photosByAge).map(([age, photoList]) =>
+        photoList.map((src: string) => (
+          <figure class={`photo photo-${age.replace(/\s+/g, "-").toLowerCase()}`} data-age={age}>
+            <img src={src} alt={`Baby photo - ${age}`} loading="lazy" />
+          </figure>
+        ))
+      )}
+    </div>
+  </section>
+</Layout>
+
+<style>
+.page {
+  max-width: 980px;
+  margin: 2.5rem auto 0;
+}
+
+.filter-section {
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.filter-section label {
+  font-weight: 600;
+  color: #1f2933;
+}
+
+.filter-section select {
+  padding: 0.5rem 0.75rem;
+  border: 2px solid rgba(148, 163, 184, 0.5);
+  border-radius: 6px;
+  font-size: 1rem;
+  font-family: inherit;
+  cursor: pointer;
+  background: white;
+  transition: border-color 0.2s;
+}
+
+.filter-section select:hover,
+.filter-section select:focus {
+  border-color: #8ec5fc;
+  outline: none;
+}
+
+.gallery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-top: 1rem;
+  align-items: flex-start;
+}
+
+.photo {
+  width: 100%;
+  aspect-ratio: 4/3;
+  overflow: hidden;
+  border-radius: 8px;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.12);
+}
+
+/* Display 2 years old photos in flex grid with complete view */
+.photo-2-years-old {
+  aspect-ratio: auto;
+  height: auto;
+  width: auto;
+  max-width: 100%;
+  overflow: visible;
+  margin: 0;
+}
+
+.photo-1-year-old {
+  display: none;
+}
+
+.photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.photo-2-years-old img {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 500px;
+  object-fit: contain;
+}
+
+@media (max-width: 520px) {
+  .gallery {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+</style>

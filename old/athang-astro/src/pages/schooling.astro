@@ -1,0 +1,23 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const res = await fetch("/api/updates", { cache: "no-store" });
+const data = await res.json();
+const schooling = data.schooling ?? {};
+const activities = schooling.activities ?? [];
+---
+
+<Layout title="Schooling | Baby Athang">
+  <h1>Schooling & Activities 🎒</h1>
+
+  <p><strong>School Name:</strong> {schooling.schoolName ?? "Add in admin panel"}</p>
+  <p><strong>Class / Grade:</strong> {schooling.className ?? "Add in admin panel"}</p>
+
+  <h2>Activities</h2>
+  {activities.length === 0 && <p>No activities added yet.</p>}
+  <ul>
+    {activities.map((a) => (
+      <li>{a}</li>
+    ))}
+  </ul>
+</Layout>

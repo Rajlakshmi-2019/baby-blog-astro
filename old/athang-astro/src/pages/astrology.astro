@@ -1,0 +1,18 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const res = await fetch("/api/updates", { cache: "no-store" });
+const data = await res.json();
+const astro = data.astrology ?? {};
+---
+
+<Layout title="Astrology | Baby Athang">
+  <h1>Astrology & Horoscope 🔯</h1>
+
+  <ul>
+    <li><strong>Date & Time of Birth:</strong> {astro.birthDetails ?? "Add in admin panel"}</li>
+    <li><strong>Rashi / Zodiac:</strong> {astro.rashi ?? "Add in admin panel"}</li>
+    <li><strong>Nakshatra:</strong> {astro.nakshatra ?? "Add in admin panel"}</li>
+    <li><strong>Special Notes:</strong> {astro.notes ?? "Add in admin panel"}</li>
+  </ul>
+</Layout>

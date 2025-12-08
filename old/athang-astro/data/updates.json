@@ -1,0 +1,26 @@
+{
+  "milestones": [
+    {
+      "title": "2 years 4 months – full power explorer",
+      "date": "2025-11-01",
+      "description": "Running around, asking why for everything, and dancing to every song!"
+    }
+  ],
+  "medical": {
+    "birthWeight": "10.6",
+    "bloodGroup": "o+",
+    "lastCheckup": "Nov 2025",
+    "notes": ""
+  },
+  "astrology": {
+    "birthDetails": "11th July 2023 12:55:01",
+    "rashi": "Mesh",
+    "nakshatra": "Aswini",
+    "notes": "Born under a lucky star!"
+  },
+  "schooling": {
+    "schoolName": "",
+    "className": "",
+    "activities": []
+  }
+}

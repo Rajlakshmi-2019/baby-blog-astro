@@ -1,0 +1,33 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const res = await fetch("/api/updates", { cache: "no-store" });
+const data = await res.json();
+const milestones = data.milestones ?? [];
+---
+
+<Layout title="Milestones | Baby Athang">
+  <h1>Milestones & Monthly Progress 📈</h1>
+  {milestones.length === 0 && <p>No milestones added yet. Use the Admin page to add some.</p>}
+
+  {milestones.map((item) => (
+    <article class="card">
+      <h2>{item.title}</h2>
+      <p class="meta">{item.date}</p>
+      <p>{item.description}</p>
+    </article>
+  ))}
+</Layout>
+
+<style>
+.card {
+  background: #fff4d6;
+  border-radius: 14px;
+  padding: 1rem 1.1rem;
+  margin-bottom: 0.8rem;
+}
+.meta {
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
+</style>

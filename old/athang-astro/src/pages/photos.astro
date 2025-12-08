@@ -1,0 +1,47 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const photos = [
+  { src: "/photos/athang1.jpg", caption: "Newborn snuggles" },
+  { src: "/photos/athang2.jpg", caption: "First smile" },
+  { src: "/photos/athang3.jpg", caption: "Play time" }
+];
+---
+
+<Layout title="Photo Gallery | Baby Athang">
+  <h1>Photo Gallery 📸</h1>
+  <p>Add your favourite photos to <code>public/photos/</code> and update this list.</p>
+
+  <div class="grid">
+    {photos.map((p) => (
+      <figure class="card">
+        <img src={p.src} alt={p.caption} loading="lazy" />
+        <figcaption>{p.caption}</figcaption>
+      </figure>
+    ))}
+  </div>
+</Layout>
+
+<style>
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 1rem;
+}
+.card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 0.5rem;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+}
+img {
+  width: 100%;
+  border-radius: 10px;
+  display: block;
+}
+figcaption {
+  padding-top: 0.35rem;
+  font-size: 0.85rem;
+  text-align: center;
+}
+</style>

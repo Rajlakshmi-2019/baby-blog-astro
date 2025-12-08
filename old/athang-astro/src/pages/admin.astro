@@ -1,0 +1,136 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Admin | Baby Athang">
+  <h1>Admin Panel (Local Only)</h1>
+  <p>
+    Use this page to add milestones and update details. This demo stores data in a JSON
+    file on the server, so it works when running on Node (e.g. <code>npm run dev</code> or Node adapter).
+  </p>
+
+  <section>
+    <h2>Add Milestone</h2>
+    <form method="post" action="/api/updates">
+      <input type="hidden" name="type" value="milestone" />
+      <label>
+        Title
+        <input name="title" required />
+      </label>
+      <label>
+        Date
+        <input name="date" placeholder="2025-11-27" />
+      </label>
+      <label>
+        Description
+        <textarea name="description" rows="3" required></textarea>
+      </label>
+      <button type="submit">Save Milestone</button>
+    </form>
+  </section>
+
+  <section>
+    <h2>Medical Details</h2>
+    <form method="post" action="/api/updates">
+      <input type="hidden" name="type" value="medical" />
+      <label>
+        Birth Weight
+        <input name="birthWeight" placeholder="3.1 kg" />
+      </label>
+      <label>
+        Blood Group
+        <input name="bloodGroup" placeholder="A+ / B+ etc." />
+      </label>
+      <label>
+        Last Check-up
+        <input name="lastCheckup" placeholder="Jan 2025" />
+      </label>
+      <label>
+        Notes
+        <textarea name="notes" rows="2"></textarea>
+      </label>
+      <button type="submit">Save Medical</button>
+    </form>
+  </section>
+
+  <section>
+    <h2>Astrology</h2>
+    <form method="post" action="/api/updates">
+      <input type="hidden" name="type" value="astrology" />
+      <label>
+        Birth Details
+        <input name="birthDetails" placeholder="01 Jan 2023, 10:15 PM, Pune" />
+      </label>
+      <label>
+        Rashi / Zodiac
+        <input name="rashi" />
+      </label>
+      <label>
+        Nakshatra
+        <input name="nakshatra" />
+      </label>
+      <label>
+        Notes
+        <textarea name="notes" rows="2"></textarea>
+      </label>
+      <button type="submit">Save Astrology</button>
+    </form>
+  </section>
+
+  <section>
+    <h2>Schooling</h2>
+    <form method="post" action="/api/updates">
+      <input type="hidden" name="type" value="schooling" />
+      <label>
+        School Name
+        <input name="schoolName" />
+      </label>
+      <label>
+        Class / Grade
+        <input name="className" />
+      </label>
+      <label>
+        Activities (comma separated)
+        <input name="activities" placeholder="Drawing, Dance, Story time" />
+      </label>
+      <button type="submit">Save Schooling</button>
+    </form>
+  </section>
+</Layout>
+
+<style>
+form {
+  display: grid;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  max-width: 480px;
+}
+label {
+  display: grid;
+  gap: 0.25rem;
+  font-size: 0.9rem;
+}
+input, textarea {
+  padding: 0.4rem 0.5rem;
+  border-radius: 8px;
+  border: 1px solid #d4d4d8;
+  font: inherit;
+}
+button {
+  justify-self: flex-start;
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  background: var(--accent);
+  background-image: linear-gradient(62deg, var(--accent) 0%, var(--accent2) 100%);
+  font-weight: 600;
+}
+section {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
+}
+</style>
