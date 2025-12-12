@@ -1,0 +1,285 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const samplePosts = [
+  { month: 1, title: "First Month Highlights", description: "Short recap + IG video", link: "https://www.instagram.com/p/XXXXXXXXX/", _sample: true, _tags: '#athang #1month' },
+  { month: 4, title: "Sits With Support - Video", description: "Tummy time video", link: "https://example.com/videos/tummy-time.mp4", _sample: true, _tags: '#athang #4months' },
+  { month: 9, title: "First Words - YouTube", description: "Saying first word", link: "https://www.youtube.com/watch?v=dQw4w9WgXcQ", _sample: true, _tags: '#athang #9months' },
+  { month: 18, title: "18 Months - Reel", description: "18 month reel for Athang", link: "https://www.instagram.com/reel/DEiTGewtfJBfSWG-93HPh2svYXuwb4xx8jhnyU0/", _sample: true, _tags: '#athang #18monthsold' },
+];
+
+const months = [
+  'Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'
+];
+---
+
+<Layout title="Monthly Posts | Baby Athang">
+  <section class="page">
+    <h1>Monthly Posts / Instagram & Video Links</h1>
+
+    <p class="lead">Add video links (YouTube or direct mp4/webm) or paste Instagram post URLs. You can store entries locally in your browser.</p>
+
+    <div style="display:flex;gap:.6rem;align-items:center;margin-bottom:.6rem">
+      <label style="margin:0">Filter by age tag:
+        <select id="age-filter" style="margin-left:.4rem;padding:.4rem;border-radius:6px;border:1px solid #cbd5e1">
+          <option value="all">All</option>
+        </select>
+      </label>
+      <div style="color:#64748b;font-size:.95rem">Tip: tag posts with <code>#18monthsold</code> or <code>#18months</code></div>
+    </div>
+
+    <form id="post-form" class="post-form">
+      <label>
+        Month:
+        <select id="post-month">
+          {Array.from({length:12}).map((_,i) => (
+            <option value={i+1}>{months[i]} (Month {i+1})</option>
+          ))}
+        </select>
+      </label>
+
+      <label>
+        Title:
+        <input id="post-title" type="text" placeholder="Short title" />
+      </label>
+
+      <label>
+        Description:
+        <input id="post-desc" type="text" placeholder="Optional description" />
+      </label>
+
+      <label>
+        Video / Post Link:
+        <input id="post-link" type="url" placeholder="https://... (YouTube / mp4 / instagram)" />
+      </label>
+
+      <label>
+        Tags (space-separated, include #):
+        <input id="post-tags" type="text" placeholder="#athang #18monthsold" />
+      </label>
+
+      <div class="form-actions">
+        <button type="button" id="add-post">Add Post</button>
+        <button type="button" id="clear-posts">Clear All (local)</button>
+      </div>
+    </form>
+
+    <hr />
+
+    <div id="posts-root" class="posts-root"></div>
+  </section>
+</Layout>
+
+<style>
+.page { max-width:880px; margin:2.5rem auto; padding:0 1rem }
+.lead { color:#475569; margin-bottom:1rem }
+.post-form { display:grid; gap:.6rem; grid-template-columns: 1fr 1fr; align-items:center }
+.post-form label { display:flex; flex-direction:column; font-size:.9rem }
+.post-form input, .post-form select { padding:.5rem; border-radius:6px; border:1px solid #cbd5e1 }
+.post-form .form-actions { grid-column:1/-1; display:flex; gap:.5rem }
+button { background:#8ec5fc; border:none; padding:.5rem .8rem; border-radius:6px; cursor:pointer }
+button:hover { background:#6fb8f7 }
+.posts-root { margin-top:1.2rem; display:grid; gap:1rem }
+.post-card { background:white; padding:1rem; border-radius:8px; box-shadow:0 6px 18px rgba(15,23,42,.06); display:grid; grid-template-columns: 1fr 160px; gap:1rem; align-items:start }
+.post-card .meta { font-size:.95rem }
+.post-card .meta .month { font-weight:700; color:#0f1729 }
+.post-actions { display:flex; gap:.5rem; justify-self:end }
+.media-preview { max-width:100%; height:120px; object-fit:cover; border-radius:6px }
+.post-tags { display:flex; flex-wrap:wrap; gap:.4rem; margin:.3rem 0 }
+.tag { background:#e0f2fe; color:#0369a1; padding:.2rem .5rem; border-radius:4px; font-size:.85rem }
+@media (max-width:700px) { .post-form { grid-template-columns:1fr } .post-card { grid-template-columns: 1fr } }
+</style>
+
+<script type="module">
+  const STORAGE_KEY = 'monthlyPosts_v1';
+
+  function isYouTube(url) {
+    return /(?:youtube.com\/watch\?v=|youtu.be\/)/i.test(url);
+  }
+
+  function youTubeEmbed(url) {
+    const idMatch = url.match(/(?:youtube.com\/watch\?v=|youtu.be\/)([\w-]+)/i);
+    return idMatch ? `https://www.youtube.com/embed/${idMatch[1]}` : null;
+  }
+
+  function isVideoFile(url) {
+    return /\.(mp4|webm|mov)(?:\?|$)/i.test(url);
+  }
+
+  function loadPosts() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      const stored = raw ? JSON.parse(raw) : [];
+      return [...samplePosts, ...stored];
+    } catch (e) { return samplePosts.slice(); }
+  }
+
+  function savePosts(posts) {
+    const userPosts = posts.filter(p => !p._sample);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(userPosts));
+  }
+
+  function extractHashtags(text) {
+    if (!text) return [];
+    const tags = Array.from(text.matchAll(/#([\w-]+)/gi)).map(m => ('#' + m[1].toLowerCase()));
+    return [...new Set(tags)];
+  }
+
+  function ageFromTags(tags) {
+    for (const t of tags) {
+      const m = t.match(/^#(\d{1,3})/);
+      if (m) return parseInt(m[1], 10);
+      const m2 = t.match(/^(?:#)?(\d{1,3})month/);
+      if (m2) return parseInt(m2[1],10);
+    }
+    for (const t of tags) {
+      const m3 = t.match(/(\d{1,3})/);
+      if (m3) return parseInt(m3[1],10);
+    }
+    return null;
+  }
+
+  function renderPreviewHtml(link) {
+    if (!link) return '';
+    if (isYouTube(link)) {
+      const embed = youTubeEmbed(link);
+      if (embed) return `<iframe class="media-preview" src="${embed}" frameborder="0" allowfullscreen></iframe>`;
+    }
+    if (isVideoFile(link)) {
+      return `<video class="media-preview" src="${link}" controls muted playsinline></video>`;
+    }
+    return `<a href="${link}" target="_blank" rel="noopener noreferrer"><img class="media-preview" src="https://via.placeholder.com/320x180?text=Open+Post" alt="Open post"/></a>`;
+  }
+
+  function render() {
+    const root = document.getElementById('posts-root');
+    const posts = loadPosts();
+    root.innerHTML = '';
+
+    const ageSelect = document.getElementById('age-filter');
+    const selectedAge = ageSelect ? ageSelect.value : 'all';
+
+    const byMonth = {};
+    posts.forEach((p, i) => {
+      const k = p.month || 0;
+      byMonth[k] = byMonth[k] || [];
+      byMonth[k].push({...p, _idx:i});
+    });
+
+    Object.keys(byMonth).sort((a,b)=>a-b).forEach(monthKey => {
+      const month = parseInt(monthKey,10);
+      const displayHeader = (month > 0 && month <= 12) ? `${months[month-1]} (Month ${month})` : (month > 0 ? `Month ${month}` : 'Misc');
+      const header = document.createElement('div');
+      header.innerHTML = `<h3 style="margin:.2rem 0">${displayHeader}</h3>`;
+
+      if (selectedAge !== 'all') {
+        const sel = parseInt(selectedAge,10);
+        const hasMatch = byMonth[month].some(pp => {
+          const tags = pp.tags || extractHashtags(pp._tags || '');
+          const a = ageFromTags(tags);
+          return a === sel;
+        });
+        if (!hasMatch) return;
+      }
+
+      root.appendChild(header);
+
+      byMonth[month].forEach(p => {
+        if (selectedAge !== 'all') {
+          const sel = parseInt(selectedAge,10);
+          const tags = p.tags || extractHashtags(p._tags || '');
+          const a = ageFromTags(tags);
+          if (a !== sel) return;
+        }
+
+        const card = document.createElement('div');
+        card.className = 'post-card';
+        const displayMonthLabel = (month > 0 && month <= 12) ? `${months[month-1]} (M${month})` : (month > 0 ? `M${month}` : '');
+        const tags = p.tags || extractHashtags(p._tags || '');
+        const tagsHtml = tags.length ? `<div class="post-tags">${tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>` : '';
+        card.innerHTML = `
+          <div class="meta">
+            <div class="month">${displayMonthLabel} ${p.title||''}</div>
+            <div class="desc">${p.description||''}</div>
+            ${tagsHtml}
+            <div class="link"><a href="${p.link||'#'}" target="_blank" rel="noopener noreferrer">Open link</a></div>
+          </div>
+          <div class="preview">
+            ${renderPreviewHtml(p.link)}
+            <div class="post-actions">
+              <button data-idx="${p._idx}" class="delete-btn">Delete</button>
+            </div>
+          </div>
+        `;
+        root.appendChild(card);
+      });
+    });
+
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const idx = parseInt(btn.dataset.idx,10);
+        if (isNaN(idx)) return;
+        const posts = loadPosts();
+        posts.splice(idx,1);
+        savePosts(posts);
+        render();
+      });
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const addBtn = document.getElementById('add-post');
+    const clearBtn = document.getElementById('clear-posts');
+    const monthEl = document.getElementById('post-month');
+    const titleEl = document.getElementById('post-title');
+    const descEl = document.getElementById('post-desc');
+    const linkEl = document.getElementById('post-link');
+    const tagsEl = document.getElementById('post-tags');
+    const ageFilterEl = document.getElementById('age-filter');
+
+    render();
+
+    function populateAgeOptions() {
+      const posts = loadPosts();
+      const ages = new Set();
+      posts.forEach(p => {
+        const tags = p.tags || extractHashtags(p._tags || '');
+        const a = ageFromTags(tags);
+        if (a) ages.add(a);
+      });
+      const sorted = Array.from(ages).sort((a,b)=>a-b);
+      if (!ageFilterEl) return;
+      ageFilterEl.innerHTML = '<option value="all">All</option>' + sorted.map(a=>`<option value="${a}">${a} months</option>`).join('');
+    }
+    populateAgeOptions();
+
+    ageFilterEl && ageFilterEl.addEventListener('change', () => render());
+
+    addBtn.addEventListener('click', () => {
+      const post = {
+        month: parseInt(monthEl.value,10) || 0,
+        title: titleEl.value || '(no title)',
+        description: descEl.value || '',
+        link: linkEl.value || ''
+      };
+      const rawTags = (tagsEl && tagsEl.value) ? tagsEl.value : '';
+      const tags = extractHashtags(rawTags);
+      post.tags = tags;
+      post._tags = rawTags;
+      post._sample = false;
+      const existing = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+      existing.push(post);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(existing));
+      titleEl.value = descEl.value = linkEl.value = '';
+      if (tagsEl) tagsEl.value = '';
+      populateAgeOptions();
+      render();
+    });
+
+    clearBtn.addEventListener('click', () => {
+      if (!confirm('Clear all user-added posts from localStorage?')) return;
+      localStorage.removeItem(STORAGE_KEY);
+      render();
+    });
+  });
+</script>

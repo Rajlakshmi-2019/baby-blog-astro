@@ -1,0 +1,292 @@
+---
+import fs from "fs";
+import path from "path";
+import Layout from "../layouts/Layout.astro";
+
+// Helper function to read images from a directory
+// Helper function to read images from a directory
+function getImagesFromFolder(folderPath: string): string[] {
+  const fullPath = path.resolve(folderPath);
+  if (!fs.existsSync(fullPath)) return [];
+  
+  return fs
+    .readdirSync(fullPath)
+    .filter((f: string) => /\.(jpe?g|png|webp|gif)$/i.test(f))
+    .sort()
+    .map((f: string) => `${folderPath}/${f}`);
+}
+
+// Photos organized by age category from specific folders
+const photosByAge: Record<string, string[]> = {
+  "1st Birthday": getImagesFromFolder("public/photos/one"),
+  "2 years old Birthday shoot": getImagesFromFolder("public/photos/two"),
+};
+
+const ageCategories = Object.keys(photosByAge);
+const defaultAge = ageCategories[0];
+---
+
+<!-- Client-side filter script: runs in browser -->
+<script type="module">
+  document.addEventListener('DOMContentLoaded', () => {
+    const filterSelect = document.getElementById('age-filter');
+    const photoFigures = Array.from(document.querySelectorAll('.photo'));
+
+    function applyFilter(selectedAge) {
+      photoFigures.forEach((fig) => {
+        const age = fig.getAttribute('data-age');
+        fig.classList.toggle('hidden', age !== selectedAge);
+      });
+    }
+
+    if (!filterSelect) return;
+
+    // Populate default and attach listener
+    const firstCategory = (filterSelect.options && filterSelect.options.length) ? filterSelect.options[0].value : undefined;
+    if (firstCategory) {
+      filterSelect.value = firstCategory;
+      applyFilter(firstCategory);
+    }
+
+    filterSelect.addEventListener('change', (e) => {
+      const selected = e.target.value;
+      applyFilter(selected);
+    });
+
+    // Lightbox: enlarge image on click + navigation
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = lightbox && lightbox.querySelector('.lightbox-img');
+    const lightboxClose = lightbox && lightbox.querySelector('.lightbox-close');
+    const lightboxPrev = lightbox && lightbox.querySelector('.lightbox-prev');
+    const lightboxNext = lightbox && lightbox.querySelector('.lightbox-next');
+
+    let visibleImgs = [];
+    let currentIndex = -1;
+
+    function rebuildVisible() {
+      visibleImgs = photoFigures
+        .filter((fig) => !fig.classList.contains('hidden'))
+        .map((fig) => fig.querySelector('img'))
+        .filter(Boolean);
+    }
+
+    function openLightboxIndex(i) {
+      if (!lightbox || !lightboxImg || !visibleImgs.length) return;
+      currentIndex = ((i % visibleImgs.length) + visibleImgs.length) % visibleImgs.length;
+      const img = visibleImgs[currentIndex];
+      lightboxImg.src = img.src;
+      lightboxImg.alt = img.alt || '';
+      lightbox.classList.remove('hidden');
+      lightbox.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function next() {
+      openLightboxIndex(currentIndex + 1);
+    }
+
+    function prev() {
+      openLightboxIndex(currentIndex - 1);
+    }
+
+    function closeLightbox() {
+      if (!lightbox || !lightboxImg) return;
+      lightbox.classList.add('hidden');
+      lightbox.setAttribute('aria-hidden', 'true');
+      lightboxImg.src = '';
+      document.body.style.overflow = '';
+      currentIndex = -1;
+    }
+
+    // Attach click handlers to images; rebuild visible list before opening
+    photoFigures.forEach((fig) => {
+      const img = fig.querySelector('img');
+      if (!img) return;
+      img.style.cursor = 'zoom-in';
+      img.addEventListener('click', () => {
+        rebuildVisible();
+        const idx = visibleImgs.findIndex((i) => i === img);
+        openLightboxIndex(idx >= 0 ? idx : 0);
+      });
+    });
+
+    if (lightboxClose) lightboxClose.addEventListener('click', closeLightbox);
+    if (lightboxPrev) lightboxPrev.addEventListener('click', (e) => { e.stopPropagation(); prev(); });
+    if (lightboxNext) lightboxNext.addEventListener('click', (e) => { e.stopPropagation(); next(); });
+
+    if (lightbox) {
+      lightbox.addEventListener('click', (e) => {
+        if (e.target === lightbox) closeLightbox();
+      });
+
+      lightbox.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        if (e.deltaY > 0) next(); else prev();
+      }, { passive: false });
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowRight') next();
+      if (e.key === 'ArrowLeft') prev();
+    });
+  });
+</script>
+
+<Layout title="Photos | Baby Athang">
+  <section class="page">
+    <h2>Photo Gallery 📸</h2>
+
+    <div class="filter-section">
+      <label for="age-filter">Filter by Age:</label>
+      <select id="age-filter">
+        {ageCategories.map((age) => (
+          <option value={age} selected={age === defaultAge}>{age}</option>
+        ))}
+      </select>
+    </div>
+
+    <div class="gallery" id="photo-gallery">
+      {Object.entries(photosByAge).map(([age, photoList]) =>
+        photoList.map((src: string) => (
+          <figure class={`photo photo-${age.replace(/\s+/g, "-").toLowerCase()} ${age !== defaultAge ? 'hidden' : ''}`} data-age={age}>
+            <img src={src} alt={`Baby photo - ${age}`} loading="lazy" />
+          </figure>
+        ))
+      )}
+    </div>
+
+    <!-- Lightbox modal for enlarged images -->
+    <div id="lightbox" class="lightbox hidden" aria-hidden="true">
+      <button class="lightbox-close" aria-label="Close">×</button>
+      <button class="lightbox-prev" aria-label="Previous">‹</button>
+      <img class="lightbox-img" src="" alt="" />
+      <button class="lightbox-next" aria-label="Next">›</button>
+    </div>
+  </section>
+</Layout>
+
+<style>
+.page {
+  max-width: 980px;
+  margin: 2.5rem auto 0;
+}
+
+.filter-section {
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.filter-section label {
+  font-weight: 600;
+  color: #1f2933;
+}
+
+.filter-section select {
+  padding: 0.5rem 0.75rem;
+  border: 2px solid rgba(148, 163, 184, 0.5);
+  border-radius: 6px;
+  font-size: 1rem;
+  font-family: inherit;
+  cursor: pointer;
+  background: white;
+  transition: border-color 0.2s;
+}
+
+.filter-section select:hover,
+.filter-section select:focus {
+  border-color: #8ec5fc;
+  outline: none;
+}
+
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+  align-items: start;
+}
+
+.photo {
+  width: 100%;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.12);
+  background: #f8fafc;
+  display: block;
+}
+
+
+
+/* Generic: show all category images at their natural aspect ratio (no cropping) */
+figure[data-age] img {
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto;
+}
+
+/* Ensure photos that should be hidden are removed from layout */
+.photo.hidden {
+  display: none !important;
+}
+
+/* Keep gallery responsive; images will vary in height based on their natural aspect ratio */
+@media (max-width: 520px) {
+  .gallery {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Lightbox styles */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.8);
+  z-index: 9999;
+  padding: 1rem;
+}
+.lightbox.hidden { display: none; }
+.lightbox-img {
+  max-width: 95%;
+  max-height: 95%;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+  border-radius: 6px;
+  background: white;
+}
+.lightbox-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 2rem;
+  line-height: 1;
+  cursor: pointer;
+}
+/* Prev/Next buttons */
+.lightbox-prev,
+.lightbox-next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0,0,0,0.45);
+  color: white;
+  border: none;
+  padding: 0.5rem 0.8rem;
+  font-size: 2rem;
+  line-height: 1;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.lightbox-prev { left: 1rem; }
+.lightbox-next { right: 1rem; }
+</style>

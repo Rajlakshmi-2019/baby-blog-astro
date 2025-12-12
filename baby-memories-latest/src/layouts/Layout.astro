@@ -1,0 +1,136 @@
+---
+const { title = "Baby Athang" } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>{title}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="/global.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <img
+          src="/photos/athang-banner.jpg"
+          alt="Baby Athang"
+          class="sidebar-photo"
+        />
+      </aside>
+
+      <div class="main-area">
+        <header class="top-header">
+          <h1 class="site-title">Baby Athang</h1>
+          <nav class="nav-pills">
+            <a href="/photos" class="pill">Photos</a>
+            <a href="/milestones" class="pill">Milestones</a>
+            <a href="/monthly" class="pill">Monthly Updates</a>
+            <a href="/medical" class="pill">Medical</a>
+            <a href="/astrology" class="pill">Astrology</a>
+            <a href="/schooling" class="pill">Schooling</a>
+          </nav>
+        </header>
+
+        <main>
+          <slot />
+        </main>
+
+        <footer class="footer">
+          <p>Made with <span class="heart">❤</span> for Athang&apos;s memories.</p>
+        </footer>
+      </div>
+    </div>
+  </body>
+</html>
+
+<style>
+.app-shell {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  min-height: 100vh;
+}
+
+.sidebar {
+  background: #f3f4ff;
+  border-right: 1px solid rgba(148, 163, 184, 0.35);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 1rem 0.75rem;
+}
+
+.sidebar-photo {
+  width: 100%;
+  max-width: 180px;
+  border-radius: 4px;
+  object-fit: cover;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.35);
+}
+
+.main-area {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.top-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 2.5rem;
+  background: var(--header-gradient);
+  box-shadow: 0 2px 12px rgba(15, 23, 42, 0.15);
+}
+
+.site-title {
+  margin: 0;
+  font-size: 2.3rem;
+  font-weight: 700;
+}
+
+.nav-pills {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.pill {
+  text-decoration: none;
+  padding: 0.45rem 0.95rem;
+  border-radius: 999px;
+  background: var(--nav-pill-bg);
+  font-weight: 600;
+  font-size: 0.95rem;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.18);
+}
+
+.pill:hover {
+  background: var(--nav-pill-hover);
+}
+
+.footer {
+  text-align: center;
+  padding: 1.5rem 1rem 2rem;
+  font-size: 0.85rem;
+  opacity: 0.75;
+  margin-top: auto;
+}
+
+.footer .heart {
+  color: #f97373;
+}
+
+@media (max-width: 900px) {
+  .app-shell {
+    grid-template-columns: 1fr;
+  }
+  .sidebar {
+    display: none;
+  }
+  .top-header {
+    padding-inline: 1.5rem;
+  }
+}
+</style>

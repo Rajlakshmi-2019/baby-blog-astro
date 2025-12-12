@@ -1,0 +1,529 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+interface Milestone {
+  month: number;
+  title: string;
+  category: string;
+  completed: boolean;
+  date: string | null;
+  description: string;
+  media: string[];
+}
+
+// Comprehensive milestone data
+const milestones: Milestone[] = [
+  // Month 0-1
+  { month: 0, title: "Birth", category: "physical", completed: true, date: "2023-11-15", description: "Baby arrives!", media: [] },
+  { month: 1, title: "First Smile", category: "social", completed: true, date: "2023-12-15", description: "First genuine smile at mama", media: [] },
+  { month: 1, title: "Tracking Objects", category: "cognitive", completed: true, date: "2023-12-20", description: "Eyes follow movement", media: [] },
+  { month: 1, title: "Grasp Reflex", category: "physical", completed: true, date: "2023-12-10", description: "Grasps objects placed in palm", media: [] },
+  
+  // Month 2
+  { month: 2, title: "Cooing Sounds", category: "communication", completed: true, date: "2024-01-10", description: "Makes vowel sounds (ooh, aah)", media: [] },
+  { month: 2, title: "Lifts Head 45°", category: "physical", completed: true, date: "2024-01-18", description: "Can lift head while on tummy", media: [] },
+  { month: 2, title: "Social Smiling", category: "social", completed: true, date: "2024-01-20", description: "Smiles in response to faces", media: [] },
+  { month: 2, title: "Follows Light", category: "cognitive", completed: true, date: "2024-01-15", description: "Follows bright objects with eyes", media: [] },
+  
+  // Month 3
+  { month: 3, title: "Rolled Over", category: "physical", completed: true, date: "2024-02-08", description: "First rollover from tummy to back", media: [] },
+  { month: 3, title: "Laughs Out Loud", category: "social", completed: true, date: "2024-02-12", description: "Genuine laughs and giggles", media: [] },
+  { month: 3, title: "Babbling Begins", category: "communication", completed: true, date: "2024-02-15", description: "Makes ba-ba, da-da sounds", media: [] },
+  { month: 3, title: "Lifts Chest", category: "physical", completed: true, date: "2024-02-10", description: "Can lift chest off ground on tummy", media: [] },
+  { month: 3, title: "Recognizes Faces", category: "cognitive", completed: true, date: "2024-02-18", description: "Recognizes familiar people", media: [] },
+  
+  // Month 4
+  { month: 4, title: "Sits With Support", category: "physical", completed: true, date: "2024-03-10", description: "Can sit upright with support", media: [] },
+  { month: 4, title: "Grasps Objects", category: "physical", completed: true, date: "2024-03-15", description: "Intentional grasping of toys", media: [] },
+  { month: 4, title: "Reaches for Toys", category: "cognitive", completed: true, date: "2024-03-12", description: "Reaches out to grab toys", media: [] },
+  { month: 4, title: "Explores Hands", category: "physical", completed: true, date: "2024-03-18", description: "Brings hands to mouth, examines them", media: [] },
+  { month: 4, title: "Enjoys Tummy Time", category: "physical", completed: true, date: "2024-03-20", description: "Tolerates and enjoys tummy time longer", media: [] },
+  
+  // Month 5
+  { month: 5, title: "First Tooth", category: "physical", completed: false, date: null, description: "Lower front tooth appears", media: [] },
+  { month: 5, title: "Rolls Both Ways", category: "physical", completed: false, date: null, description: "Can roll tummy to back and back to tummy", media: [] },
+  { month: 5, title: "Babbling More", category: "communication", completed: false, date: null, description: "More complex babbling patterns", media: [] },
+  { month: 5, title: "Transfers Objects", category: "cognitive", completed: false, date: null, description: "Can pass objects from one hand to another", media: [] },
+  { month: 5, title: "Shows Preferences", category: "social", completed: false, date: null, description: "Shows preferences for favorite toys and people", media: [] },
+  
+  // Month 6
+  { month: 6, title: "Sits Without Support", category: "physical", completed: false, date: null, description: "Can sit alone for short periods", media: [] },
+  { month: 6, title: "First Teeth (Multiple)", category: "physical", completed: false, date: null, description: "Multiple teeth appearing", media: [] },
+  { month: 6, title: "Starts Food Exploration", category: "physical", completed: false, date: null, description: "Ready for solid food introduction", media: [] },
+  { month: 6, title: "Stranger Anxiety", category: "social", completed: false, date: null, description: "Shows caution around unfamiliar people", media: [] },
+  { month: 6, title: "Object Permanence", category: "cognitive", completed: false, date: null, description: "Understands objects still exist when hidden", media: [] },
+  
+  // Month 7-8
+  { month: 7, title: "Crawling Begins", category: "physical", completed: false, date: null, description: "First attempts to crawl", media: [] },
+  { month: 7, title: "Sits Independently", category: "physical", completed: false, date: null, description: "Sits upright without any support", media: [] },
+  { month: 7, title: "Waves Bye-Bye", category: "communication", completed: false, date: null, description: "Waves hand in imitation of bye-bye", media: [] },
+  { month: 8, title: "Cruising Begins", category: "physical", completed: false, date: null, description: "Pulls to standing and cruises furniture", media: [] },
+  { month: 8, title: "Pincer Grasp", category: "physical", completed: false, date: null, description: "Uses thumb and fingers to pick up small objects", media: [] },
+  
+  // Month 9-10
+  { month: 9, title: "Crawling Proficiently", category: "physical", completed: false, date: null, description: "Fast, efficient crawling", media: [] },
+  { month: 9, title: "Says First Word", category: "communication", completed: false, date: null, description: "First meaningful word (mama, dada, etc.)", media: [] },
+  { month: 9, title: "Separation Anxiety", category: "social", completed: false, date: null, description: "Shows distress when parent leaves", media: [] },
+  { month: 10, title: "Stands Alone Briefly", category: "physical", completed: false, date: null, description: "Stands without support for a few seconds", media: [] },
+  { month: 10, title: "Understands \"No\"", category: "cognitive", completed: false, date: null, description: "Responds to negative commands", media: [] },
+  
+  // Month 11-12
+  { month: 11, title: "First Steps", category: "physical", completed: false, date: null, description: "Takes first independent steps", media: [] },
+  { month: 11, title: "Points At Objects", category: "communication", completed: false, date: null, description: "Points to objects of interest", media: [] },
+  { month: 12, title: "First Birthday!", category: "social", completed: false, date: null, description: "Celebrates first year!", media: [] },
+  { month: 12, title: "Multiple Words", category: "communication", completed: false, date: null, description: "Says several words with meaning", media: [] },
+  { month: 12, title: "Walking Improving", category: "physical", completed: false, date: null, description: "Walking becomes more stable and confident", media: [] },
+];
+
+// Growth data
+const growthData = [
+  { month: 0, weight: 3.2, height: 49.5, headCircumference: 34.5 },
+  { month: 1, weight: 4.1, height: 52.0, headCircumference: 36.2 },
+  { month: 2, weight: 5.0, height: 54.5, headCircumference: 37.8 },
+  { month: 3, weight: 5.8, height: 57.0, headCircumference: 39.2 },
+  { month: 4, weight: 6.5, height: 59.0, headCircumference: 40.3 },
+  { month: 6, weight: 7.5, height: 63.0, headCircumference: 42.0 },
+  { month: 9, weight: 8.8, height: 68.0, headCircumference: 43.5 },
+  { month: 12, weight: 9.5, height: 71.0, headCircumference: 44.8 },
+];
+
+const categoryIcons: Record<string, string> = {
+  physical: "🏃",
+  social: "👶",
+  cognitive: "🧠",
+  communication: "💬",
+};
+
+// Calculate progress by category
+const getProgressByCategory = (category: string) => {
+  const categoryMilestones = milestones.filter((m) => m.category === category);
+  const completed = categoryMilestones.filter((m) => m.completed).length;
+  return categoryMilestones.length > 0 ? (completed / categoryMilestones.length) * 100 : 0;
+};
+---
+
+<Layout title="Milestones | Baby Athang">
+  <section class="page">
+    <h1>Milestones &amp; Progress 📈</h1>
+    
+    <!-- Milestone Timeline -->
+    <div class="timeline-section">
+      <h2>Milestone Timeline</h2>
+      <div class="timeline">
+        {milestones.map((m) => (
+          <div class={`timeline-item ${m.completed ? 'completed' : 'pending'}`} data-month={m.month}>
+            <div class="timeline-marker">{m.month === 0 ? "Birth" : `M${m.month}`}</div>
+            <div class="timeline-card">
+              <div class="card-header">
+                <span class="category-badge" title={m.category}>
+                  {categoryIcons[m.category] || "📝"}
+                </span>
+                <h3>{m.title}</h3>
+                {m.completed && <span class="checkmark">✓</span>}
+              </div>
+              {m.date && <p class="card-date">{new Date(m.date).toLocaleDateString()}</p>}
+              <p class="card-description">{m.description}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Growth Tracker -->
+    <div class="growth-section">
+      <h2>Growth Tracker</h2>
+      <div class="growth-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Month</th>
+              <th>Weight (kg)</th>
+              <th>Height (cm)</th>
+              <th>Head Circ. (cm)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {growthData.map((g) => (
+              <tr>
+                <td><strong>Month {g.month}</strong></td>
+                <td>{g.weight.toFixed(1)}</td>
+                <td>{g.height.toFixed(1)}</td>
+                <td>{g.headCircumference.toFixed(1)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Weight Chart -->
+      <div class="chart-container">
+        <h3>Weight Progress (kg)</h3>
+        <div class="simple-chart">
+          {growthData.map((g) => {
+            const maxWeight = Math.max(...growthData.map((d) => d.weight));
+            const height = (g.weight / maxWeight) * 200;
+            return (
+              <div class="bar-group">
+                <div class="bar" style={`height: ${height}px;`}></div>
+                <label>M{g.month}</label>
+                <span class="value">{g.weight}</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+
+    <!-- Progress Summary -->
+    <div class="summary-section">
+      <h2>Development Summary</h2>
+      <div class="progress-cards">
+        <div class="progress-card">
+          <h3>Physical Dev.</h3>
+          <div class="progress-bar">
+            <div class="progress-fill" style={`width: ${getProgressByCategory('physical')}%`}></div>
+          </div>
+          <p>{milestones.filter((m) => m.category === 'physical' && m.completed).length} / {milestones.filter((m) => m.category === 'physical').length}</p>
+        </div>
+        <div class="progress-card">
+          <h3>Social</h3>
+          <div class="progress-bar">
+            <div class="progress-fill" style={`width: ${getProgressByCategory('social')}%`}></div>
+          </div>
+          <p>{milestones.filter((m) => m.category === 'social' && m.completed).length} / {milestones.filter((m) => m.category === 'social').length}</p>
+        </div>
+        <div class="progress-card">
+          <h3>Communication</h3>
+          <div class="progress-bar">
+            <div class="progress-fill" style={`width: ${getProgressByCategory('communication')}%`}></div>
+          </div>
+          <p>{milestones.filter((m) => m.category === 'communication' && m.completed).length} / {milestones.filter((m) => m.category === 'communication').length}</p>
+        </div>
+        <div class="progress-card">
+          <h3>Cognitive</h3>
+          <div class="progress-bar">
+            <div class="progress-fill" style={`width: ${getProgressByCategory('cognitive')}%`}></div>
+          </div>
+          <p>{milestones.filter((m) => m.category === 'cognitive' && m.completed).length} / {milestones.filter((m) => m.category === 'cognitive').length}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+.page {
+  max-width: 900px;
+  margin: 2.5rem auto 0;
+  padding: 0 1rem;
+}
+
+h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
+  color: #0f1729;
+}
+
+h2 {
+  font-size: 1.8rem;
+  margin: 2rem 0 1.5rem 0;
+  color: #1f2933;
+}
+
+/* Timeline Styles */
+.timeline-section {
+  margin-bottom: 3rem;
+}
+
+.timeline {
+  position: relative;
+  padding: 2rem 0;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 20px;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(to bottom, #8ec5fc, #e0c3fc);
+}
+
+.timeline-item {
+  margin-bottom: 2rem;
+  padding-left: 80px;
+  position: relative;
+}
+
+.timeline-marker {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 50px;
+  height: 50px;
+  background: white;
+  border: 3px solid #8ec5fc;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: #0f1729;
+  font-size: 0.85rem;
+}
+
+.timeline-item.completed .timeline-marker {
+  background: #8ec5fc;
+  color: white;
+}
+
+.timeline-card {
+  background: white;
+  border-radius: 10px;
+  padding: 1rem;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+  border-left: 4px solid #e0c3fc;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.timeline-item.completed .timeline-card {
+  border-left-color: #8ec5fc;
+  background: #f0f8ff;
+}
+
+.timeline-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.12);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 0.5rem;
+}
+
+.card-header h3 {
+  margin: 0;
+  font-size: 1rem;
+  color: #0f1729;
+  flex: 1;
+}
+
+.category-badge {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.checkmark {
+  color: #10b981;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.card-date {
+  font-size: 0.8rem;
+  color: #64748b;
+  margin: 0.2rem 0;
+}
+
+.card-description {
+  font-size: 0.9rem;
+  color: #475569;
+  margin: 0.3rem 0 0 0;
+}
+
+/* Growth Section */
+.growth-section {
+  background: #f8fafc;
+  padding: 2rem;
+  border-radius: 12px;
+  margin-bottom: 3rem;
+}
+
+.growth-table {
+  overflow-x: auto;
+  margin-bottom: 2rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+thead tr {
+  background: #e0f2fe;
+}
+
+th {
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: #0f1729;
+  border-bottom: 2px solid #bae6fd;
+  font-size: 0.9rem;
+}
+
+td {
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid #e2e8f0;
+  color: #475569;
+  font-size: 0.9rem;
+}
+
+tbody tr:hover {
+  background: #f0f8ff;
+}
+
+.chart-container {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+}
+
+.chart-container h3 {
+  margin-top: 0;
+  color: #0f1729;
+  font-size: 1.1rem;
+}
+
+.simple-chart {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  gap: 1rem;
+  height: 250px;
+  padding: 1rem 0;
+}
+
+.bar-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+
+.bar {
+  width: 100%;
+  background: linear-gradient(to top, #8ec5fc, #e0c3fc);
+  border-radius: 8px 8px 0 0;
+  min-height: 10px;
+  transition: box-shadow 0.2s;
+}
+
+.bar:hover {
+  box-shadow: 0 0 8px rgba(142, 197, 252, 0.5);
+}
+
+.bar-group label {
+  margin-top: 0.5rem;
+  font-weight: 600;
+  color: #475569;
+  font-size: 0.85rem;
+}
+
+.bar-group .value {
+  font-size: 0.8rem;
+  color: #64748b;
+  margin-top: 0.2rem;
+}
+
+/* Summary Section */
+.summary-section {
+  margin-bottom: 2rem;
+}
+
+.progress-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1.5rem;
+}
+
+.progress-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+}
+
+.progress-card h3 {
+  margin-top: 0;
+  font-size: 0.95rem;
+  color: #0f1729;
+  font-weight: 600;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 20px;
+  background: #e2e8f0;
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 1rem 0;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(to right, #8ec5fc, #e0c3fc);
+  transition: width 0.3s ease;
+}
+
+.progress-card p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .timeline::before {
+    left: 12px;
+  }
+
+  .timeline-marker {
+    width: 40px;
+    height: 40px;
+    font-size: 0.75rem;
+  }
+
+  .timeline-item {
+    padding-left: 70px;
+    margin-bottom: 1.5rem;
+  }
+
+  .simple-chart {
+    height: 200px;
+  }
+
+  .progress-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  h1 {
+    font-size: 1.8rem;
+  }
+
+  h2 {
+    font-size: 1.4rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .progress-cards {
+    grid-template-columns: 1fr;
+  }
+  
+  .timeline-item {
+    padding-left: 60px;
+  }
+  
+  .timeline-marker {
+    width: 35px;
+    height: 35px;
+  }
+}
+</style>
